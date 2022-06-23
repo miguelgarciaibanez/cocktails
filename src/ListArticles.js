@@ -4,6 +4,7 @@ import ListItem from '@mui/material/ListItem';
 import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
+import Toolbar from "@mui/material/Toolbar";
 import Typography from '@mui/material/Typography';
 
 
@@ -26,31 +27,35 @@ export default function ListArticles() {
   const handleClose = () => setOpen(false);
 
     return (
+      <div>
+        <Toolbar />
         <List sx={{ marginLeft:"240px"}}>
         {[1, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20].map((value) => (
-        <ListItem
-          key={value}
-          disableGutters
-        >
-          <Button onClick={handleOpen}>Open modal</Button>
-          <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
+          <ListItem
+            key={value}
+            disableGutters
           >
-            <Box sx={style}>
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-                Text in a modal
-              </Typography>
-              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-              </Typography>
-            </Box>
-          </Modal>
-        </ListItem>
-      ))}
-    </List>
+            <Button onClick={handleOpen}>Open modal</Button>
+            <Modal
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={style}>
+                <Typography id="modal-modal-title" variant="h6" component="h2">
+                  Text in a modal
+                </Typography>
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                  Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                </Typography>
+              </Box>
+            </Modal>
+          </ListItem>
+        ))}
+      </List>
+      </div>
+        
     )
     
 }
