@@ -127,7 +127,6 @@ function App() {
           })
         });
       }
-      
       setCocktailsFiltered(alcoholicFiltered);
 
     } catch(err) {

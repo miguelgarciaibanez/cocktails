@@ -13,7 +13,7 @@ import { useState } from "react";
 
 export default function SideBar(props) {
 
-  const [valueAlcoholic, setValueAlcoholic] = useState(null);
+  const [valueAlcoholic, setValueAlcoholic] = useState(undefined);
   const [valueIngredient, setValueIngredient] = useState(null);
   const [valueCategory, setValueCategory] = useState(null);
   const [valueGlass, setValueGlass] = useState(null);
