@@ -2,60 +2,92 @@ import * as React from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Toolbar from "@mui/material/Toolbar";
-import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
+import ClearIcon from '@mui/icons-material/Clear';
+import ModalWindow from './ModalWindow';
+import {useState} from 'react';
 
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
-
-export default function ListArticles() {
+export default function ListArticles(props) {
   
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [open, setOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [nameInput, setNameInput] = useState('');
+  const [nameDrinkSearched, setNameDrinkSearched] = useState(null);
+  const handleOpen = (item) => {setOpen(true); setSelectedItem(item);}
+  const handleClose = () => {setOpen(false); setSelectedItem(null);}
+  
+  const handeChangeDrinkName = (event) => {
+    setNameInput(event.target.value);
+  }
+
+  const clearSearchByName = () =>{
+    setNameInput('');
+    setNameDrinkSearched(null);
+    props.onHandleEraseSearchByName();
+  }
+
+  const handleSearch = () => {    
+    setNameDrinkSearched(nameInput);
+    props.onHandleSearchByName(nameInput);
+  }
+
 
     return (
       <div>
         <Toolbar />
-        <List sx={{ marginLeft:"240px"}}>
-        {[1, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20].map((value) => (
-          <ListItem
-            key={value}
-            disableGutters
-          >
-            <Button onClick={handleOpen}>Open modal</Button>
-            <Modal
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="modal-modal-title"
-              aria-describedby="modal-modal-description"
+        <TextField
+          id="outlined-helperText"
+          label="Cocktail Name"
+          value={nameInput}
+          sx={{ marginLeft:"240px", marginTop:"20px"}}
+          size="small"
+          onChange={handeChangeDrinkName}
+          InputProps={{
+            endAdornment: <InputAdornment position="end">
+                          {nameDrinkSearched ? 
+                            <IconButton
+                                aria-label="Search"
+                                onClick={clearSearchByName}
+                                edge="end"
+                              >
+                                <ClearIcon />
+                            </IconButton> :
+                            <IconButton
+                              aria-label="Search"
+                              onClick={handleSearch}
+                              edge="end"
+                            >
+                               <SearchIcon />
+                            </IconButton>
+                          }
+                          </InputAdornment>
+          }}
+        />
+        <Box sx={{ height:"100%"}}>
+          <List sx={{ marginLeft:"250px", maxHeight:"500px", overflow:"auto"}}>
+          {props.cocktails.map((cocktail) => (
+            <ListItem
+              alignItems="flex-start"
+              key={cocktail.idDrink}
+              disableGutters
             >
-              <Box sx={style}>
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                  Text in a modal
-                </Typography>
-                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                  Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                </Typography>
-              </Box>
-            </Modal>
-          </ListItem>
-        ))}
-      </List>
+              {cocktail.strDrink}
+              <Button onClick={() => {handleOpen(cocktail)}}>{cocktail.strDrink}</Button>
+            </ListItem>
+          ))}
+          </List>
+          { open && 
+            <ModalWindow open={open} handleClose={handleClose} selectedItem={selectedItem}/>
+            }
+        </Box>
       </div>
-        
+      
     )
     
 }

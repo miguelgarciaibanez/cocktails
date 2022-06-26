@@ -2,64 +2,129 @@ import { Drawer } from "@mui/material";
 import React from "react";
 import Box from '@mui/material/Box';
 import Checkbox from "@mui/material/Checkbox";
-import Select from "@mui/material/Select";
+import FormControlLabel from '@mui/material/FormControlLabel';
 import Toolbar from "@mui/material/Toolbar";
-import MenuItem from "@mui/material/MenuItem";
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
-import { useState } from 'react';
+import Button from '@mui/material/Button';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+import Stack from '@mui/material/Stack';
+import { useState } from "react";
 
-export default function SideBar( props ){
+export default function SideBar(props) {
 
-    const [selected, setSelected] = useState([]);
+  const [valueAlcoholic, setValueAlcoholic] = useState(null);
+  const [valueIngredient, setValueIngredient] = useState(null);
+  const [valueCategory, setValueCategory] = useState(null);
+  const [valueGlass, setValueGlass] = useState(null);
 
-    const handleChange = (event) => {
+  const ingredients = {
+    options: props.ingredients.drinks,
+    getOptionLabel: (option) => option.strIngredient1
+  }
 
-      const value = event.target.value;
-      /*
-      if (value[value.length - 1] === "all") {
-        setSelected(selected.length === options.length ? [] : options);
-        return;
-      }*/
-      setSelected(value);
-      console.log("value:", value);
-      props.onChangeFilter(value);
-    };
-    const drawerWidth = 240;
-    return(
-        <Drawer variant="permanent"
-        sx={{
-          backgroundColor: 0x00000,
-          width: drawerWidth,
-          flexShrink: 0,
-          [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
-        }} >
-        <Toolbar />
-        <Box sx={{ overflow: 'auto' }}>
+  const categories = {
+    options: props.categories.drinks,
+    getOptionLabel: (option) => option.strCategory
+  }
+
+  const glass = {
+    options: props.glass.drinks,
+    getOptionLabel: (option) => option.strGlass
+  }
+
+  const handleChangeAlcoholic = (event) => {
+    setValueAlcoholic(event.target.checked);
+    props.onHandleAlcoholic(event.target.checked);
+  }
+
+  const handleChangeIngredient = (newValue) => {
+    setValueIngredient(newValue);
+    props.onHandleChangeIngredient(newValue);
+  };
+
+  const handleChangeCategory = (newValue) => {
+    setValueCategory(newValue);
+    props.onHandleChangeCategory(newValue);
+  }
+
+  const handleChangeGlass = (newValue) => {
+    setValueGlass(newValue);
+    props.onHandleChangeGlass(newValue);
+  }
+
+  const onCleanFilter = () =>{
+    setValueAlcoholic(null);
+    setValueIngredient(null);
+    setValueCategory(null);
+    setValueGlass(null);
+    props.onCleanFilter();
+  }
+
+  const drawerWidth = 240;
+  return (
+    <Drawer variant="permanent"
+      sx={{
+        backgroundColor: 0x00000,
+        width: drawerWidth,
+        flexShrink: 0,
+        [`& .MuiDrawer-paper`]: { width: drawerWidth, boxSizing: 'border-box' },
+      }} >
+      <Toolbar />
+      <Box sx={{ overflow: 'auto' }}>
         <FormControl>
-          <InputLabel id="mutiple-select-label">Multiple Select</InputLabel>
-          <Select
-            labelId="mutiple-select-label"
-            multiple
-            value={selected}
-            onChange={handleChange}
-            renderValue={(selected) => selected.join(", ")}
-          >
-            {props.ingredients.drinks.map((drink, index) => (
-              <MenuItem key={drink.strIngredient1} value={drink.strIngredient1}>
-                <ListItemIcon>
-                  <Checkbox checked={selected.indexOf(drink.strIngredient1) > -1} />
-                </ListItemIcon>
-                <ListItemText primary={drink.strIngredient1} />
-              </MenuItem>
-            ))}
-          </Select>
+          <FormControlLabel
+            control={<Checkbox onChange={handleChangeAlcoholic} checked={valueAlcoholic ? true : false}/>}
+            label="Alcoholic"
+            labelPlacement="start"
+            value={valueAlcoholic}
+          />
         </FormControl>
-          
-          </Box>
-          </Drawer>
-        )
-    
+        <Stack spacing={2} sx={{ width: 220 }}>
+          <Autocomplete
+            {...ingredients}
+            value = {valueIngredient}
+            id="ingredients"
+            onChange={(event, newValue) => {
+              handleChangeIngredient(newValue);
+            }}
+            autoComplete
+            includeInputInList
+            renderInput={(params) => (
+              <TextField {...params} label="Ingredient" variant="standard" />
+            )}
+          />
+          <Autocomplete
+            {...categories}
+            id="categories"
+            value = {valueCategory}
+            onChange={(event, newValue) => {
+              handleChangeCategory(newValue);
+            }}
+            autoComplete
+            includeInputInList
+            renderInput={(params) => (
+              <TextField {...params} label="Category" variant="standard" />
+            )}
+          />
+          <Autocomplete
+            {...glass}
+            id="glass"
+            value = {valueGlass}
+            onChange={(event, newValue) => {
+              handleChangeGlass(newValue);
+            }}
+            autoComplete
+            includeInputInList
+            renderInput={(params) => (
+              <TextField {...params} label="Glass" variant="standard" />
+            )}
+          />
+          <Button variant="contained" onClick={() => props.onApplyFilter()}>Filter</Button>
+          <Button variant="contained" onClick={onCleanFilter}>Clear Filter</Button>
+        </Stack>
+      </Box>
+    </Drawer>
+  )
+
 }
